@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iframe-finder Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    iframe {
+      border: 2px solid #333;
+      margin: 10px 0;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>iframe-finder Demo</h1>
+
+  <div>
+    <button onclick="findByIdTest()">Find iframe by ID</button>
+    <button onclick="findByNameTest()">Find iframe by Name</button>
+    <button onclick="findByCustomTest()">Find by Custom Criteria</button>
+  </div>
+
+  <div id="result"></div>
+
+  <!-- Test iframes -->
+  <iframe id="testFrame1" name="firstFrame" src="about:blank" width="300" height="200"></iframe>
+
+  <iframe id="testFrame2" name="secondFrame" src="about:blank" width="300" height="200"></iframe>
+
+  <script type="module">
+    import { findIframeById, findIframeByName, findIframe } from './dist/index.js';
+
+    window.findByIdTest = function() {
+      const iframe = findIframeById('testFrame1');
+      showResult(`Found iframe by ID: ${iframe ? iframe.id : 'Not found'}`);
+    };
+
+    window.findByNameTest = function() {
+      const iframe = findIframeByName('secondFrame');
+      showResult(`Found iframe by Name: ${iframe ? iframe.name : 'Not found'}`);
+    };
+
+    window.findByCustomTest = function() {
+      const iframe = findIframe((frame) => frame.id.startsWith('testFrame'));
+      showResult(`Found iframe by custom criteria: ${iframe ? iframe.id : 'Not found'}`);
+    };
+
+    function showResult(message) {
+      document.getElementById('result').innerHTML = `<strong>Result:</strong> ${message}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "iframe-finder",
+  "version": "1.0.0",
+  "description": "Recursively find nested iframes by id, name, or custom criteria in the DOM tree",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iframe",
+    "nested",
+    "recursive",
+    "dom",
+    "find",
+    "search",
+    "traverse"
+  ],
+  "author": "Artem Deikun",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/artemhp/iframe-finder.git"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
