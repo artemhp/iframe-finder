@@ -1,6 +1,6 @@
 {
   "name": "iframe-finder",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Recursively find nested iframes by id, name, or custom criteria in the DOM tree",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

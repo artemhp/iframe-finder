@@ -42,6 +42,33 @@ import { findIframeByName } from 'iframe-finder';
 const iframe = findIframeByName('contentFrame');
 ```
 
+### Find Element Across All Iframes
+
+```typescript
+import { findElement } from 'iframe-finder';
+
+// Find element by selector anywhere in iframe hierarchy
+const healthTab = findElement('[title="Character Info"]');
+
+// No need to know which iframe contains the element!
+const button = findElement('#submitButton');
+
+// Works with any CSS selector
+const element = findElement('.special-class');
+```
+
+### Find All Elements Across All Iframes
+
+```typescript
+import { findAllElements } from 'iframe-finder';
+
+// Find all matching elements across all iframes
+const allButtons = findAllElements('button.submit');
+
+// Find all elements with specific attribute
+const allLinks = findAllElements('a[target="_blank"]');
+```
+
 ### Custom Search Criteria
 
 ```typescript

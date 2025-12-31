@@ -177,10 +177,163 @@ export function findAllIframes(
   return Array.from(iframes).filter(predicate);
 }
 
+/**
+ * Recursively searches for an element by CSS selector across all iframes
+ *
+ * @param selector - CSS selector to search for
+ * @param options - Search options
+ * @returns The first matching element or null if not found
+ *
+ * @example
+ * ```typescript
+ * // Find element anywhere in iframe hierarchy
+ * const healthTab = findElement('[title="Character Info"]');
+ *
+ * // Find with depth limit
+ * const element = findElement('.special-class', { maxDepth: 3 });
+ * ```
+ */
+export function findElement(
+  selector: string,
+  options: FindIframeOptions = {}
+): HTMLElement | null {
+  const { rootDocument = document, maxDepth = Infinity } = options;
+
+  return findElementRecursive(selector, rootDocument, 0, maxDepth);
+}
+
+/**
+ * Internal recursive function to search for element across iframes
+ *
+ * @param selector - CSS selector to search for
+ * @param doc - Current document to search
+ * @param currentDepth - Current recursion depth
+ * @param maxDepth - Maximum allowed depth
+ * @returns Found element or null
+ */
+function findElementRecursive(
+  selector: string,
+  doc: Document,
+  currentDepth: number,
+  maxDepth: number
+): HTMLElement | null {
+  // Check depth limit
+  if (currentDepth > maxDepth) {
+    return null;
+  }
+
+  // Try to find element in current document
+  const element = doc.querySelector(selector) as HTMLElement | null;
+  if (element) {
+    return element;
+  }
+
+  // Search in all nested iframes
+  const iframes = doc.querySelectorAll('iframe');
+  for (const iframe of Array.from(iframes)) {
+    try {
+      const contentDoc = iframe.contentDocument;
+      if (!contentDoc) continue;
+
+      const foundInNested = findElementRecursive(
+        selector,
+        contentDoc,
+        currentDepth + 1,
+        maxDepth
+      );
+
+      if (foundInNested) {
+        return foundInNested;
+      }
+    } catch (error) {
+      // Skip iframes we can't access (cross-origin security)
+      continue;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Recursively searches for all elements matching CSS selector across all iframes
+ *
+ * @param selector - CSS selector to search for
+ * @param options - Search options
+ * @returns Array of all matching elements
+ *
+ * @example
+ * ```typescript
+ * // Find all matching elements across all iframes
+ * const buttons = findAllElements('button.submit');
+ *
+ * // Find with depth limit
+ * const elements = findAllElements('.item', { maxDepth: 2 });
+ * ```
+ */
+export function findAllElements(
+  selector: string,
+  options: FindIframeOptions = {}
+): HTMLElement[] {
+  const { rootDocument = document, maxDepth = Infinity } = options;
+  const results: HTMLElement[] = [];
+
+  findAllElementsRecursive(selector, rootDocument, 0, maxDepth, results);
+
+  return results;
+}
+
+/**
+ * Internal recursive function to find all elements across iframes
+ *
+ * @param selector - CSS selector to search for
+ * @param doc - Current document to search
+ * @param currentDepth - Current recursion depth
+ * @param maxDepth - Maximum allowed depth
+ * @param results - Array to collect results
+ */
+function findAllElementsRecursive(
+  selector: string,
+  doc: Document,
+  currentDepth: number,
+  maxDepth: number,
+  results: HTMLElement[]
+): void {
+  // Check depth limit
+  if (currentDepth > maxDepth) {
+    return;
+  }
+
+  // Find all elements in current document
+  const elements = doc.querySelectorAll(selector);
+  results.push(...Array.from(elements) as HTMLElement[]);
+
+  // Search in all nested iframes
+  const iframes = doc.querySelectorAll('iframe');
+  for (const iframe of Array.from(iframes)) {
+    try {
+      const contentDoc = iframe.contentDocument;
+      if (!contentDoc) continue;
+
+      findAllElementsRecursive(
+        selector,
+        contentDoc,
+        currentDepth + 1,
+        maxDepth,
+        results
+      );
+    } catch (error) {
+      // Skip iframes we can't access (cross-origin security)
+      continue;
+    }
+  }
+}
+
 // Export default object with all functions
 export default {
   findIframeById,
   findIframeByName,
   findIframe,
   findAllIframes,
+  findElement,
+  findAllElements,
 };
